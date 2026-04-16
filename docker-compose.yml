@@ -1,0 +1,41 @@
+services:
+  # 后端 Spring Boot 服务
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: media-publish-backend
+    environment:
+      - TZ=Asia/Shanghai
+    volumes:
+      - uploads_data:/app/uploads
+    ports:
+      - "8081:8080"
+    restart: unless-stopped
+    networks:
+      - media-publish-network
+
+  # 前端 Vue + Nginx
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: media-publish-frontend
+    ports:
+      - "8899:80"
+      - "8443:443"
+    depends_on:
+      - backend
+    restart: unless-stopped
+    networks:
+      - media-publish-network
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+
+volumes:
+  uploads_data:
+    driver: local
+
+networks:
+  media-publish-network:
+    driver: bridge
