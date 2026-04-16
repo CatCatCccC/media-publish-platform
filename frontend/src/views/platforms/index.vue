@@ -39,7 +39,7 @@
                     <el-input
                       v-model="forms[platform.code].credentials"
                       type="password"
-                      placeholder="请输入凭证信息"
+                      placeholder="点击下方按钮自动获取"
                       show-password
                     />
                   </el-form-item>
@@ -49,14 +49,14 @@
                 </el-form>
                 
                 <div class="platform-actions">
-                  <el-button type="success" size="small" @click="openAuthDialog(platform.code)">
+                  <el-button type="success" size="small" @click="openBrowser(platform.code)">
                     获取凭证
                   </el-button>
                   <el-button type="primary" size="small" @click="handleSave(platform.code)">
-                    保存配置
+                    保存
                   </el-button>
                   <el-button size="small" @click="handleTest(platform.code)">
-                    测试连接
+                    测试
                   </el-button>
                 </div>
               </div>
@@ -68,20 +68,19 @@
       <el-alert type="info" :closable="false" style="margin-top: 20px;">
         <template #title>
           <div class="config-tips">
-            <p><strong>凭证获取方式：</strong></p>
+            <p><strong>使用说明：</strong></p>
             <ul>
-              <li>点击「获取凭证」按钮，系统会打开远程浏览器窗口</li>
-              <li>在远程浏览器中登录对应平台</li>
-              <li>登录成功后点击「提取凭证」即可自动获取</li>
+              <li>点击「获取凭证」打开远程浏览器窗口</li>
+              <li>在浏览器中登录对应平台</li>
+              <li>登录成功后点击「提取凭证」自动填充</li>
             </ul>
           </div>
         </template>
       </el-alert>
     </el-card>
     
-    <!-- 凭证获取对话框 -->
-    <AuthDialog
-      v-model="authDialogVisible"
+    <BrowserDialog
+      v-model="browserDialogVisible"
       :platform="currentPlatform"
       @success="handleAuthSuccess"
     />
@@ -93,7 +92,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Refresh, Monitor, Reading, ChatDotRound } from '@element-plus/icons-vue'
 import { usePlatformStore } from '@/stores/platform'
-import AuthDialog from '@/components/auth/AuthDialog.vue'
+import BrowserDialog from '@/components/browser/BrowserDialog.vue'
 import type { PlatformConfig } from '@/types'
 
 const platformStore = usePlatformStore()
@@ -105,7 +104,7 @@ const PLATFORM_LIST = [
 ]
 
 const platforms = ref<PlatformConfig[]>([])
-const authDialogVisible = ref(false)
+const browserDialogVisible = ref(false)
 const currentPlatform = ref('')
 
 const forms = reactive<Record<string, { credentials: string; enabled: boolean }>>({
@@ -133,26 +132,26 @@ const getMaskedCredentials = (platform: string) => {
   return config?.credentialsMasked ?? ''
 }
 
-const openAuthDialog = (platform: string) => {
+const openBrowser = (platform: string) => {
   currentPlatform.value = platform.toLowerCase()
-  authDialogVisible.value = true
+  browserDialogVisible.value = true
 }
 
 const handleAuthSuccess = (credentials: string) => {
   forms[currentPlatform.value.toUpperCase()].credentials = credentials
-  ElMessage.success('凭证已自动填充，请点击保存配置')
+  ElMessage.success('凭证已填充，请点击保存')
 }
 
 const handleSave = async (platform: string) => {
   const form = forms[platform]
   if (!form.credentials) {
-    ElMessage.warning('请输入凭证信息')
+    ElMessage.warning('请先获取凭证')
     return
   }
   
   try {
     await platformStore.savePlatform(platform, form.credentials, form.enabled)
-    ElMessage.success('配置保存成功')
+    ElMessage.success('保存成功')
     form.credentials = ''
     await fetchPlatforms()
   } catch (error: any) {
@@ -170,7 +169,7 @@ const handleTest = async (platform: string) => {
       ElMessage.error(`${platform}: ${result.message}`)
     }
   } catch (error: any) {
-    ElMessage.error(error.message || '测试连接失败')
+    ElMessage.error(error.message || '测试失败')
   }
 }
 
@@ -180,9 +179,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.platforms-page {
-}
-
 .card-header {
   display: flex;
   justify-content: space-between;
