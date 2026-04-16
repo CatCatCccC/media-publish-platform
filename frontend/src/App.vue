@@ -1,6 +1,6 @@
 <template>
-  <el-container class="app-container">
-    <el-header class="app-header">
+  <div class="app-wrapper">
+    <header class="app-header">
       <div class="logo">
         <el-icon><Connection /></el-icon>
         <span>自媒体文章发布系统</span>
@@ -10,29 +10,34 @@
         mode="horizontal"
         :router="true"
         class="nav-menu"
+        :ellipsis="false"
       >
         <el-menu-item index="/articles">
           <el-icon><Document /></el-icon>
           <span>文章管理</span>
         </el-menu-item>
+        
         <el-menu-item index="/platforms">
           <el-icon><Setting /></el-icon>
           <span>平台配置</span>
         </el-menu-item>
+        
         <el-menu-item index="/publish">
           <el-icon><Promotion /></el-icon>
           <span>发布文章</span>
         </el-menu-item>
+        
         <el-menu-item index="/history">
           <el-icon><Clock /></el-icon>
           <span>发布历史</span>
         </el-menu-item>
       </el-menu>
-    </el-header>
-    <el-main class="app-main">
+    </header>
+    
+    <main class="app-main">
       <router-view />
-    </el-main>
-  </el-container>
+    </main>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -45,8 +50,10 @@ const currentRoute = computed(() => route.path)
 </script>
 
 <style scoped>
-.app-container {
-  height: 100vh;
+.app-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
 .app-header {
@@ -55,6 +62,8 @@ const currentRoute = computed(() => route.path)
   background: #fff;
   border-bottom: 1px solid #e4e7ed;
   padding: 0 20px;
+  height: 60px;
+  flex-shrink: 0;
 }
 
 .logo {
@@ -65,14 +74,21 @@ const currentRoute = computed(() => route.path)
   font-weight: 600;
   color: #409eff;
   margin-right: 40px;
+  flex-shrink: 0;
 }
 
 .nav-menu {
   border-bottom: none;
+  flex: 1;
+}
+
+.nav-menu .el-menu-item {
+  font-size: 14px;
 }
 
 .app-main {
   background: #f5f7fa;
   padding: 20px;
+  flex: 1;
 }
 </style>

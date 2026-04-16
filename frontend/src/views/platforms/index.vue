@@ -162,7 +162,7 @@ onMounted(() => {
 
 <style scoped>
 .platforms-page {
-  height: 100%;
+  
 }
 
 .card-header {

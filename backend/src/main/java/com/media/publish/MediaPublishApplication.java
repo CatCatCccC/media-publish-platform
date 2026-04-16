@@ -5,7 +5,7 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("com.media.publish.**.infrastructure")
+@MapperScan("com.media.publish.features.**.mapper")
 public class MediaPublishApplication {
     public static void main(String[] args) {
         SpringApplication.run(MediaPublishApplication.class, args);

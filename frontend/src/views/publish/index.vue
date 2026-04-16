@@ -75,6 +75,7 @@
             {{ getPlatformName(row.platform) }}
           </template>
         </el-table-column>
+        
         <el-table-column prop="statusText" label="状态" width="100">
           <template #default="{ row }">
             <el-tag :type="getStatusType(row.status)">
@@ -82,6 +83,7 @@
             </el-tag>
           </template>
         </el-table-column>
+        
         <el-table-column prop="publishUrl" label="发布链接">
           <template #default="{ row }">
             <el-link
@@ -97,6 +99,7 @@
             </span>
           </template>
         </el-table-column>
+        
         <el-table-column prop="publishedAt" label="发布时间" width="180">
           <template #default="{ row }">
             {{ formatDate(row.publishedAt) }}
@@ -237,7 +240,7 @@ onMounted(() => {
 
 <style scoped>
 .publish-page {
-  max-width: 900px;
+  width: 100%;
 }
 
 .article-summary {

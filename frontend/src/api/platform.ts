@@ -2,7 +2,7 @@ import axios from 'axios'
 import type { PlatformConfig, PlatformConfigRequest, ApiResponse } from '@/types'
 
 const request = axios.create({
-  baseURL: 'http://localhost:8080/api',
+  baseURL: '/api',
   timeout: 30000
 })
 

@@ -11,6 +11,8 @@ export default defineConfig({
   },
   server: {
     port: 5173,
+    host: '0.0.0.0',
+    allowedHosts: ['.serveousercontent.com', 'localhost', 'publish.qinwx.top', '.qinwx.top'],
     proxy: {
       '/api': {
         target: 'http://localhost:8080',

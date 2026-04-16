@@ -1,0 +1,35 @@
+name: media-publish-platform
+description: 自媒体多平台发布系统 - Vue3 + Spring Boot
+version: 1.0.0
+
+services:
+  backend:
+    type: spring-boot
+    path: ./backend
+    port: 8080
+    build:
+      command: mvn clean package -DskipTests
+      output: target/*.jar
+    start:
+      command: java -jar target/*.jar
+    env:
+      SPRING_PROFILES_ACTIVE: prod
+      SERVER_PORT: 8080
+
+  frontend:
+    type: node
+    path: ./frontend
+    port: 5173
+    build:
+      command: npm install && npm run build
+      output: dist
+    start:
+      command: npm run preview -- --host 0.0.0.0 --port 5173
+    env:
+      VITE_API_BASE_URL: http://localhost:8080
+
+routing:
+  - path: /api
+    service: backend
+  - path: /
+    service: frontend

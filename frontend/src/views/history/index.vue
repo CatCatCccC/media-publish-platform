@@ -165,7 +165,7 @@ onMounted(() => {
 
 <style scoped>
 .history-page {
-  height: 100%;
+  
 }
 
 .card-header {

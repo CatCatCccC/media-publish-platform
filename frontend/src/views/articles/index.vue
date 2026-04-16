@@ -129,7 +129,7 @@ onMounted(() => {
 
 <style scoped>
 .articles-page {
-  height: 100%;
+  
 }
 
 .card-header {
