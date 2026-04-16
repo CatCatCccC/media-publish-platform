@@ -28,7 +28,7 @@
             <div class="platform-content">
               <div class="credentials-display">
                 <span class="label">凭证：</span>
-                <span class="value">{{ getMaskedCredentials(platform.code) || '未配置' }}</span>
+                <span class="value">{{ getMaskedCredentials(platform.code) || "未配置" }}</span>
               </div>
               
               <el-divider />
@@ -49,6 +49,9 @@
                 </el-form>
                 
                 <div class="platform-actions">
+                  <el-button type="success" size="small" @click="openAuthDialog(platform.code)">
+                    获取凭证
+                  </el-button>
                   <el-button type="primary" size="small" @click="handleSave(platform.code)">
                     保存配置
                   </el-button>
@@ -62,23 +65,26 @@
         </el-col>
       </el-row>
       
-      <el-alert
-        type="info"
-        :closable="false"
-        style="margin-top: 20px;"
-      >
+      <el-alert type="info" :closable="false" style="margin-top: 20px;">
         <template #title>
           <div class="config-tips">
-            <p><strong>各平台凭证说明：</strong></p>
+            <p><strong>凭证获取方式：</strong></p>
             <ul>
-              <li><strong>CSDN：</strong>登录CSDN后，从浏览器Cookie中获取"cookie"字段的值</li>
-              <li><strong>知乎：</strong>登录知乎后，从浏览器Cookie中获取"z_c0"字段的值</li>
-              <li><strong>微信公众号：</strong>在微信公众平台获取AppID和AppSecret，用冒号连接</li>
+              <li>点击「获取凭证」按钮，系统会打开远程浏览器窗口</li>
+              <li>在远程浏览器中登录对应平台</li>
+              <li>登录成功后点击「提取凭证」即可自动获取</li>
             </ul>
           </div>
         </template>
       </el-alert>
     </el-card>
+    
+    <!-- 凭证获取对话框 -->
+    <AuthDialog
+      v-model="authDialogVisible"
+      :platform="currentPlatform"
+      @success="handleAuthSuccess"
+    />
   </div>
 </template>
 
@@ -87,6 +93,7 @@ import { ref, reactive, onMounted } from 'vue'
 import { ElMessage } from 'element-plus'
 import { Refresh, Monitor, Reading, ChatDotRound } from '@element-plus/icons-vue'
 import { usePlatformStore } from '@/stores/platform'
+import AuthDialog from '@/components/auth/AuthDialog.vue'
 import type { PlatformConfig } from '@/types'
 
 const platformStore = usePlatformStore()
@@ -98,6 +105,8 @@ const PLATFORM_LIST = [
 ]
 
 const platforms = ref<PlatformConfig[]>([])
+const authDialogVisible = ref(false)
+const currentPlatform = ref('')
 
 const forms = reactive<Record<string, { credentials: string; enabled: boolean }>>({
   CSDN: { credentials: '', enabled: true },
@@ -122,6 +131,16 @@ const isEnabled = (platform: string) => {
 const getMaskedCredentials = (platform: string) => {
   const config = platforms.value.find(p => p.platform === platform)
   return config?.credentialsMasked ?? ''
+}
+
+const openAuthDialog = (platform: string) => {
+  currentPlatform.value = platform.toLowerCase()
+  authDialogVisible.value = true
+}
+
+const handleAuthSuccess = (credentials: string) => {
+  forms[currentPlatform.value.toUpperCase()].credentials = credentials
+  ElMessage.success('凭证已自动填充，请点击保存配置')
 }
 
 const handleSave = async (platform: string) => {
@@ -162,7 +181,6 @@ onMounted(() => {
 
 <style scoped>
 .platforms-page {
-  
 }
 
 .card-header {
