@@ -21,9 +21,6 @@ services:
       context: ./frontend
       dockerfile: Dockerfile
     container_name: media-publish-frontend
-    ports:
-      - "8899:80"
-      - "8443:443"
     depends_on:
       - backend
     restart: unless-stopped
