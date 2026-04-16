@@ -60,7 +60,7 @@
       <el-button @click="handleClose">取消</el-button>
       <el-button 
         type="primary" 
-        @click="extractCookies"
+        @click="extractCredentials"
         :disabled="status !== 'READY'"
         :loading="extracting"
       >
