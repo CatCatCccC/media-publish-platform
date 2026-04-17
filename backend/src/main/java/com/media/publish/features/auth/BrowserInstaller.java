@@ -6,7 +6,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 /**
- * 应用启动时自动安装 Playwright 浏览器
+ * 应用启动时自动初始化 Playwright 浏览器
  */
 @Slf4j
 @Component
@@ -17,8 +17,8 @@ public class BrowserInstaller implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        log.info("开始自动安装 Playwright 浏览器...");
+        log.info("开始初始化 Playwright 浏览器...");
         String result = browserSessionService.installBrowser();
-        log.info("Playwright 浏览器安装结果: {}", result);
+        log.info("Playwright 浏览器初始化结果: {}", result);
     }
 }
