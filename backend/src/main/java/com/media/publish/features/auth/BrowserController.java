@@ -18,6 +18,14 @@ public class BrowserController {
     private final BrowserSessionService browserSessionService;
 
     /**
+     * 安装 Playwright 浏览器
+     */
+    @GetMapping("/install")
+    public ApiResponse<String> installBrowser() {
+        return ApiResponse.success(browserSessionService.installBrowser());
+    }
+
+    /**
      * 创建浏览器会话
      */
     @PostMapping("/session/{platform}")

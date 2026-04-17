@@ -3,6 +3,7 @@ package com.media.publish.features.auth;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
+import com.microsoft.playwright.cli.CLI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
@@ -20,6 +21,21 @@ public class BrowserSessionService {
 
     private final Map<String, BrowserSession> sessions = new ConcurrentHashMap<>();
     private static final int SESSION_TIMEOUT_SECONDS = 300;
+    
+    /**
+     * 安装 Playwright 浏览器
+     */
+    public String installBrowser() {
+        try {
+            log.info("开始安装 Playwright 浏览器...");
+            CLI.main(new String[]{"install", "chromium"});
+            log.info("Playwright 浏览器安装成功");
+            return "Playwright 浏览器安装成功";
+        } catch (Exception e) {
+            log.error("安装 Playwright 浏览器失败: {}", e.getMessage());
+            return "安装失败: " + e.getMessage();
+        }
+    }
     
     /**
      * 创建浏览器会话
@@ -150,7 +166,7 @@ public class BrowserSessionService {
         
         try {
             session.click(x, y);
-            Thread.sleep(500); // 等待页面响应
+            Thread.sleep(500);
             return getScreenshot(sessionId);
         } catch (Exception e) {
             return Map.of("success", false, "error", e.getMessage());
