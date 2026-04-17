@@ -3,10 +3,11 @@ package com.media.publish.features.auth;
 import com.microsoft.playwright.*;
 import com.microsoft.playwright.options.Cookie;
 import com.microsoft.playwright.options.LoadState;
-import com.microsoft.playwright.cli.CLI;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.time.LocalDateTime;
@@ -28,9 +29,23 @@ public class BrowserSessionService {
     public String installBrowser() {
         try {
             log.info("开始安装 Playwright 浏览器...");
-            CLI.main(new String[]{"install", "chromium"});
-            log.info("Playwright 浏览器安装成功");
-            return "Playwright 浏览器安装成功";
+            ProcessBuilder pb = new ProcessBuilder("java", "-cp", System.getProperty("java.class.path"), "com.microsoft.playwright.CLI", "install", "chromium");
+            pb.redirectErrorStream(true);
+            Process process = pb.start();
+            BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+            String line;
+            StringBuilder output = new StringBuilder();
+            while ((line = reader.readLine()) != null) {
+                output.append(line).append("\n");
+                log.info("[Playwright] {}", line);
+            }
+            int exitCode = process.waitFor();
+            if (exitCode == 0) {
+                log.info("Playwright 浏览器安装成功");
+                return "安装成功\n" + output.toString();
+            } else {
+                return "安装失败，退出码: " + exitCode + "\n" + output.toString();
+            }
         } catch (Exception e) {
             log.error("安装 Playwright 浏览器失败: {}", e.getMessage());
             return "安装失败: " + e.getMessage();
